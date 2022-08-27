@@ -24,6 +24,21 @@ function createGalleryMurkup(items) {
 }
 
 galleryEl.addEventListener("click", onCardClick);
+let instance = basicLightbox.create(
+  `
+      <img src="">
+  `,
+  {
+    onShow: () => {
+      console.log("open");
+      window.addEventListener("keydown", closeModalWindowByEsc);
+    },
+    onClose: () => {
+      console.log("close");
+      window.removeEventListener("keydown", closeModalWindowByEsc);
+    },
+  }
+);
 
 //открытие модального окна
 function onCardClick(event) {
@@ -32,21 +47,16 @@ function onCardClick(event) {
   if (!event.target.classList.contains("gallery__image")) {
     return;
   }
-
-  const instance = basicLightbox.create(`
-      <img src="${event.target.dataset.source}">
-  `);
-
+  const elem = instance.element();
+  const img = elem.querySelector("img");
+  img.src = event.target.dataset.source;
+  console.log(img);
   instance.show();
+}
 
-  //   прослушка клавистуры и закрытие по Esc
-  window.addEventListener("keydown", closeModalWindowByEsc);
-
-  function closeModalWindowByEsc(event) {
-    console.log(event.code);
-    if (event.code === "Escape") {
-      instance.close();
-      window.removeEventListener("keydown", closeModalWindowByEsc);
-    }
+function closeModalWindowByEsc(event) {
+  console.log(event.code);
+  if (event.code === "Escape") {
+    instance.close();
   }
 }
